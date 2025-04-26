@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="grafico.aspx.cs" Inherits="projeto_academia.Grafico" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="grafico.aspx.cs" Inherits="projeto_academia.Grafico" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -135,67 +135,90 @@
 }
 </style>
    <script>
-    function gerarGrafico(
-        pesoAtual, massaGordaAtual, massaMagraAtual, toraxAtual, cinturaAtual, abdomeAtual, quadrilAtual, 
-        bracoEAtual, bracoDAtual, antebracoEAtual, antebracoDAtual, coxaEAtual, coxaDAtual, panturrilhaEAtual, panturrilhaDAtual, 
-        pesoInicial, massaGordaInicial, massaMagraInicial, toraxInicial, cinturaInicial, abdomeInicial, quadrilInicial, 
-        bracoEInicial, bracoDInicial, antebracoEInicial, antebracoDInicial, coxaEInicial, coxaDInicial, panturrilhaEInicial, panturrilhaDInicial) 
-    {
-    // Definição do gráfico com Chart.js
-var ctx = document.getElementById('meuGrafico').getContext('2d');
-var meuGrafico = new Chart(ctx, {
-    type: 'bar',  // Tipo de gráfico (pode ser 'bar', 'line', 'pie', etc.)
-    data: {
-        labels: ['Peso', 'Tórax', 'Cintura', 'Braço', 'Coxa'], // Labels das medidas
-        datasets: [{
-            label: 'Medidas do Aluno',
-            data: [70, 90, 85, 30, 40],  // Exemplos de valores das medidas
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',  // Cor do fundo das barras
-            borderColor: 'rgba(255, 99, 132, 1)',  // Cor da borda das barras
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,  // Torna o gráfico responsivo
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: 'Categorias de Medidas Corporais'  // Nome do eixo X
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Valores das Medidas (em cm ou kg)'  // Nome do eixo Y
+function gerarGrafico(
+    PesoAtual, MassaGordaAtual, MassaMagraAtual, ToraxAtual, CinturaAtual, AbdomeAtual, QuadrilAtual, 
+    BracoEsquerdoAtual, BracoDireitoAtual, AntebracoEsquerdoAtual, AntebracoDireitoAtual, CoxaEsquerdaAtual, CoxaDireitaAtual, 
+    PanturrilhaEsquerdaAtual, PanturrilhaDireitaAtual,
+    PesoInicial, MassaGordaInicial, MassaMagraInicial, ToraxInicial, CinturaInicial, AbdomeInicial, QuadrilInicial, 
+    BracoEsquerdoInicial, BracoDireitoInicial, AntebracoEsquerdoInicial, AntebracoDireitoInicial, CoxaEsquerdaInicial, CoxaDireitaInicial, 
+    PanturrilhaEsquerdaInicial, PanturrilhaDireitaInicial
+) {
+   const ctx = document.getElementById("myChart").getContext("2d");
+
+
+    const labels = [
+        "Peso", "Massa Gorda", "Massa Magra", "Tórax", "Cintura", "Abdome", "Quadril",
+        "Braço E", "Braço D", "Antebraço E", "Antebraço D", "Coxa E", "Coxa D",
+        "Panturrilha E", "Panturrilha D"
+    ];
+
+    const dadosIniciais = [
+        PesoInicial, MassaGordaInicial, MassaMagraInicial, ToraxInicial, CinturaInicial, AbdomeInicial, QuadrilInicial,
+        BracoEsquerdoInicial, BracoDireitoInicial, AntebracoEsquerdoInicial, AntebracoDireitoInicial,
+        CoxaEsquerdaInicial, CoxaDireitaInicial, PanturrilhaEsquerdaInicial, PanturrilhaDireitaInicial
+    ];
+
+    const dadosAtuais = [
+        PesoAtual, MassaGordaAtual, MassaMagraAtual, ToraxAtual, CinturaAtual, AbdomeAtual, QuadrilAtual,
+        BracoEsquerdoAtual, BracoDireitoAtual, AntebracoEsquerdoAtual, AntebracoDireitoAtual,
+        CoxaEsquerdaAtual, CoxaDireitaAtual, PanturrilhaEsquerdaAtual, PanturrilhaDireitaAtual
+    ];
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Medidas Iniciais",
+                    backgroundColor: "rgba(0, 123, 255, 0.5)",
+                    borderColor: "rgba(0, 123, 255, 1)",
+                    borderWidth: 1,
+                    data: dadosIniciais
                 },
-                beginAtZero: true  // Iniciar o eixo Y no valor zero
+                {
+                    label: "Medidas Atuais",
+                    backgroundColor: "rgba(40, 167, 69, 0.5)",
+                    borderColor: "rgba(40, 167, 69, 1)",
+                    borderWidth: 1,
+                    data: dadosAtuais
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
+    });
+       };
+
+
+
+
+    
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        const canvas = await html2canvas(document.getElementById('myChart'));
+        const chartImage = canvas.toDataURL('image/png');
+
+        pdf.setFontSize(18);
+        pdf.text("Dados do Cliente", 10, 10);
+
+        // Informações do cliente
+        pdf.setFontSize(12);
+        pdf.text("Nome: " + document.getElementById('txtNome').value, 10, 20);
+        pdf.text("Idade: " + document.getElementById('txtIdade').value, 10, 30);
+        pdf.text("CPF: " + document.getElementById('txtBuscar').value, 10, 40);
+
+        // Adiciona o gráfico
+        pdf.addImage(chartImage, 'PNG', 10, 50, 180, 90);
+        pdf.save("grafico_cliente.pdf");
     }
-});
-
-       }
-
-        async function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-            const canvas = await html2canvas(document.getElementById('myChart'));
-            const chartImage = canvas.toDataURL('image/png');
-
-            pdf.setFontSize(18);
-            pdf.text("Dados do Cliente", 10, 10);
-
-            // Informações do cliente
-            pdf.setFontSize(12);
-            pdf.text("Nome: " + document.getElementById('txtNome').value, 10, 20);
-            pdf.text("Idade: " + document.getElementById('txtIdade').value, 10, 30);
-            pdf.text("CPF: " + document.getElementById('txtBuscar').value, 10, 40);
-
-            // Adiciona o gráfico
-            pdf.addImage(chartImage, 'PNG', 10, 50, 180, 90);
-            pdf.save("grafico_cliente.pdf");
-        }
 </script>
 
 </head>
